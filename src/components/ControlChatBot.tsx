@@ -50,7 +50,6 @@ interface IStateProps extends ViewProps {
     messageList?: IMessage[];
     navigation?: any;
     currentContent: string;
-    apiKeyError?: boolean;
 }
 
 interface IMessage {
@@ -71,7 +70,7 @@ interface ITag {
 export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
     public client: any = feathers();
     private socket: any = io(Constants.Api.BASE_URL, {
-        transports: ['websocket'],
+        transports: ['websocket']
     });
     private visitor: any;
     private ref: any | null;
@@ -89,7 +88,6 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         this.state = {
             messageList: [],
             currentContent: "",
-            apiKeyError: false,
         }
     }
 
@@ -102,10 +100,6 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             });
         } catch (error) {
             console.log(error);
-            this.setState({
-                apiKeyError: true,
-            });
-            this.props.navigation.goBack();
         }
     }
 
@@ -160,10 +154,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const tagLabelSelectedColor = this.props.licenseKey ? (this.props.tagLabelSelectedColor || "#ffffff") : "#ffffff";
         const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";
         const botAvatar = this.props.botAvatar;
-        const myAvatar = this.props.myAvatar;
-        if (this.state.apiKeyError) {
-            return null;
-        }
+        const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
             <View style={Styles.fullSize}>
                 <ControlHeader
