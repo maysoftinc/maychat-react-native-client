@@ -9,6 +9,7 @@ import {
     KeyboardAvoidingView,
     ScrollView,
     Linking,
+    SafeAreaView,
 } from "react-native";
 
 import { Styles, Helpers } from "../commons";
@@ -158,154 +159,157 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
             <View style={Styles.fullSize}>
-                <ControlHeader
-                    style={{ backgroundColor: headerColor }}
-                    title={this.props.title}
-                    navigation={this.props.navigation}
-                    isShowRightButton={this.props.isShowRightButton}
-                    rightIcon={this.props.rightIcon}
-                    onBackPress={this.props.navigation.goBack}
-                    onRightButtonPress={this.props.onRightButtonPress} />
-                <KeyboardAvoidingView
-                    behavior="padding"
-                    keyboardVerticalOffset={10}
-                    style={Styles.appContainer}>
-                    <View style={[Styles.appContainer, localStyles.p16, { backgroundColor: bodyColor }]}>
-                        <ScrollView
-                            style={[{ flex: 0.75 }]}
-                            ref={(ref: any) => { this.ref = ref; }}
-                            onContentSizeChange={() => {
-                                this.ref.scrollToEnd({ animated: true });
-                            }}>
-                            <View style={Styles.appContainer}>
-                                {
-                                    (!list || list.length === 0)
-                                    &&
-                                    <View style={[Styles.vertical]}>
-                                        <View
-                                            style={[Styles.horizontal]}>
-                                            {
-                                                Helpers.isString(botAvatar) ?
-                                                    <ControlCircle size={30}
-                                                        source={{ uri: botAvatar }} />
-                                                    :
-                                                    <ControlCircle size={30}
-                                                        source={botAvatar} />
-                                            }
-                                            <View style={[
-                                                Styles.form, Styles.ml16,
+                <SafeAreaView style={Styles.appContainer}>
+                    <ControlHeader
+                        style={{ backgroundColor: headerColor }}
+                        title={this.props.title}
+                        navigation={this.props.navigation}
+                        isShowRightButton={this.props.isShowRightButton}
+                        rightIcon={this.props.rightIcon}
+                        onBackPress={this.props.navigation.goBack}
+                        onRightButtonPress={this.props.onRightButtonPress} />
+                    <KeyboardAvoidingView
+                        behavior="padding"
+                        keyboardVerticalOffset={10}
+                        style={Styles.appContainer}>
+                        <View style={[Styles.appContainer, localStyles.p16, { backgroundColor: bodyColor }]}>
+                            <ScrollView
+                                style={[{ flex: 0.77 }]}
+                                ref={(ref: any) => { this.ref = ref; }}
+                                onContentSizeChange={() => {
+                                    this.ref.scrollToEnd({ animated: true });
+                                }}>
+                                <View style={Styles.appContainer}>
+                                    {
+                                        (!list || list.length === 0)
+                                        &&
+                                        <View style={[Styles.vertical]}>
+                                            <View
+                                                style={[Styles.horizontal]}>
                                                 {
-                                                    backgroundColor: receiveMessageColor,
-                                                    maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
-                                                }]}>
-                                                <ControlText>{this.props.initMessage}</ControlText>
+                                                    Helpers.isString(botAvatar) ?
+                                                        <ControlCircle size={30}
+                                                            source={{ uri: botAvatar }} />
+                                                        :
+                                                        <ControlCircle size={30}
+                                                            source={botAvatar} />
+                                                }
+                                                <View style={[
+                                                    Styles.form, Styles.ml16,
+                                                    {
+                                                        backgroundColor: receiveMessageColor,
+                                                        maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
+                                                    }]}>
+                                                    <ControlText>{this.props.initMessage}</ControlText>
+                                                </View>
+                                            </View>
+                                            <View style={Styles.mt16}>
+                                                <TagSelect
+                                                    data={this.props.tags}
+                                                    itemStyle={[localStyles.item, { backgroundColor: tagColor }]}
+                                                    itemLabelStyle={Styles.textDefault}
+                                                    itemStyleSelected={{ backgroundColor: tagSelectedColor }}
+                                                    itemLabelStyleSelected={{ backgroundColor: tagLabelSelectedColor }}
+                                                    onItemPress={(item: any) => {
+                                                        this.onSend(item.label);
+                                                    }}
+                                                />
                                             </View>
                                         </View>
-                                        <View style={Styles.mt16}>
-                                            <TagSelect
-                                                data={this.props.tags}
-                                                itemStyle={[localStyles.item, { backgroundColor: tagColor }]}
-                                                itemLabelStyle={Styles.textDefault}
-                                                itemStyleSelected={{ backgroundColor: tagSelectedColor }}
-                                                itemLabelStyleSelected={{ backgroundColor: tagLabelSelectedColor }}
-                                                onItemPress={(item: any) => {
-                                                    this.onSend(item.label);
-                                                }}
-                                            />
-                                        </View>
-                                    </View>
-                                }
-                                {
-                                    list.map((item: IMessage, index) => {
-                                        if (item.isChatbot === 1 || item.senderId !== this.visitor.visitorId) {
-                                            let uri = item.isChatbot === 1 ? this.props.botAvatar : item.avatar;
-                                            uri = !uri ? this.props.botAvatar : uri;
+                                    }
+                                    {
+                                        list.map((item: IMessage, index) => {
+                                            if (item.isChatbot === 1 || item.senderId !== this.visitor.visitorId) {
+                                                let uri = item.isChatbot === 1 ? this.props.botAvatar : item.avatar;
+                                                uri = !uri ? this.props.botAvatar : uri;
+                                                return (
+                                                    <View key={index}
+                                                        style={[Styles.horizontal, index > 0 ? Styles.mt25 : {}, Styles.alignEnd]}>
+                                                        {
+                                                            Helpers.isString(uri) ?
+                                                                <ControlCircle size={30}
+                                                                    source={{ uri }} />
+                                                                :
+                                                                <ControlCircle size={30}
+                                                                    source={uri} />
+                                                        }
+                                                        <View style={[
+                                                            Styles.form, Styles.ml16,
+                                                            {
+                                                                backgroundColor: receiveMessageColor,
+                                                                maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
+                                                            }]}>
+                                                            <ControlText>{item.message}</ControlText>
+                                                        </View>
+                                                    </View>
+                                                )
+                                            }
                                             return (
                                                 <View key={index}
-                                                    style={[Styles.horizontal, index > 0 ? Styles.mt25 : {}, Styles.alignEnd]}>
-                                                    {
-                                                        Helpers.isString(uri) ?
-                                                            <ControlCircle size={30}
-                                                                source={{ uri }} />
-                                                            :
-                                                            <ControlCircle size={30}
-                                                                source={uri} />
-                                                    }
-                                                    <View style={[
-                                                        Styles.form, Styles.ml16,
+                                                    style={[Styles.w100pc, Styles.alignEnd, index > 0 ? Styles.mt25 : {}]}>
+                                                    <View style={[Styles.horizontal, Styles.alignEnd]}>
+                                                        <View style={[Styles.form, Styles.mr16, { backgroundColor: sendMessageColor, maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16 }]}>
+                                                            <ControlText>
+                                                                {item.message}
+                                                            </ControlText>
+                                                        </View>
                                                         {
-                                                            backgroundColor: receiveMessageColor,
-                                                            maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
-                                                        }]}>
-                                                        <ControlText>{item.message}</ControlText>
+                                                            Helpers.isString(myAvatar) ?
+                                                                <ControlCircle size={30}
+                                                                    source={{ uri: myAvatar }} />
+                                                                :
+                                                                <ControlCircle size={30}
+                                                                    source={myAvatar} />
+                                                        }
                                                     </View>
                                                 </View>
                                             )
-                                        }
-                                        return (
-                                            <View key={index}
-                                                style={[Styles.w100pc, Styles.alignEnd, index > 0 ? Styles.mt25 : {}]}>
-                                                <View style={[Styles.horizontal, Styles.alignEnd]}>
-                                                    <View style={[Styles.form, Styles.mr16, { backgroundColor: sendMessageColor, maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16 }]}>
-                                                        <ControlText>
-                                                            {item.message}
-                                                        </ControlText>
-                                                    </View>
-                                                    {
-                                                        Helpers.isString(myAvatar) ?
-                                                            <ControlCircle size={30}
-                                                                source={{ uri: myAvatar }} />
-                                                            :
-                                                            <ControlCircle size={30}
-                                                                source={myAvatar} />
-                                                    }
-                                                </View>
-                                            </View>
-                                        )
-                                    })
-                                }
-                            </View>
-                        </ScrollView>
-                        <View
-                            style={[{ flex: 0.25,
-                            }]}>
-                            <TouchableOpacity onPress={() => Linking.openURL("http://maysoft.io/")}>
-                                <ControlText
-                                    style={[Styles.text, Styles.textCenter, Styles.mb10, { color: bodyColor !== "#ffffff" ? messageBoxColor : "#333" }]}>
-                                    {"Power by maysoft.io"}
-                                </ControlText>
-                            </TouchableOpacity>
-                            <View style={[
-                                Styles.horizontal,
-                                Styles.justifyEnd,
-                                {
-                                    backgroundColor: messageBoxColor,
-                                    borderRadius: 76 / 2,
-                                    justifyContent: "space-between",
-                                    padding: 8,
-                                }, Styles.alignCenter]}>
-                                <TextInput
-                                    autoFocus
-                                    autoCorrect={false}
-                                    multiline={false}
-                                    style={[{ flex: 0.85 }, Styles.textBoldDefault, Styles.mr16]}
-                                    placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE) || "Input message..."}
-                                    value={this.state.currentContent}
-                                    onChangeText={(currentContent: string) => {
-                                        this.setState({ currentContent });
-                                    }}
-                                />
-                                <TouchableOpacity style={[Styles.w10pc, Styles.mr16, { flex: 0.15 }]}
-                                    onPress={() => this.onSend()}>
-                                    <ControlText style={Styles.textRight}
-                                        fontSize={ControlText.FontSize.X_LARGE}>
-                                        {(Strings && Strings.ChatBot.SEND) || "Send"}
+                                        })
+                                    }
+                                </View>
+                            </ScrollView>
+                            <View
+                                style={[{
+                                    flex: 0.23,
+                                }]}>
+                                <TouchableOpacity onPress={() => Linking.openURL("http://maysoft.io/")}>
+                                    <ControlText
+                                        style={[Styles.text, Styles.textCenter, Styles.mb10, { color: bodyColor !== "#ffffff" ? messageBoxColor : "#333" }]}>
+                                        {"Power by maysoft.io"}
                                     </ControlText>
                                 </TouchableOpacity>
+                                <View style={[
+                                    Styles.horizontal,
+                                    Styles.justifyEnd,
+                                    {
+                                        backgroundColor: messageBoxColor,
+                                        borderRadius: 76 / 2,
+                                        justifyContent: "space-between",
+                                        padding: 8,
+                                    }, Styles.alignCenter]}>
+                                    <TextInput
+                                        autoFocus
+                                        autoCorrect={false}
+                                        multiline={false}
+                                        style={[{ flex: 0.85 }, Styles.textBoldDefault, Styles.mr16]}
+                                        placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE) || "Input message..."}
+                                        value={this.state.currentContent}
+                                        onChangeText={(currentContent: string) => {
+                                            this.setState({ currentContent });
+                                        }}
+                                    />
+                                    <TouchableOpacity style={[Styles.w10pc, Styles.mr16, { flex: 0.15 }]}
+                                        onPress={() => this.onSend()}>
+                                        <ControlText style={Styles.textRight}
+                                            fontSize={ControlText.FontSize.X_LARGE}>
+                                            {(Strings && Strings.ChatBot.SEND) || "Send"}
+                                        </ControlText>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </KeyboardAvoidingView>
+                    </KeyboardAvoidingView>
+                </SafeAreaView>
             </View>
         );
     }
