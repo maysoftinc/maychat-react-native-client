@@ -100,6 +100,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             });
         } catch (error) {
             console.log(error);
+            this.props.navigation.goBack();
         }
     }
 
