@@ -158,8 +158,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const botAvatar = this.props.botAvatar;
         const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
-            <View style={Styles.fullSize}>
-                <SafeAreaView style={Styles.appContainer}>
+            <SafeAreaView style={Styles.appContainer}>
+                <View style={Styles.fullSize}>
                     <ControlHeader
                         style={{ backgroundColor: headerColor }}
                         title={this.props.title}
@@ -309,8 +309,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                             </View>
                         </View>
                     </KeyboardAvoidingView>
-                </SafeAreaView>
-            </View>
+                </View>
+            </SafeAreaView>
         );
     }
 }
