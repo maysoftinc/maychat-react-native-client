@@ -12,7 +12,7 @@ import {
     SafeAreaView,
 } from "react-native";
 
-import { Styles, Helpers } from "../commons";
+import { Styles, Helpers, SessionStorages } from "../commons";
 import ControlHeader from "./ControlHeader";
 import ControlCircle from "./ControlCircle";
 import { ControlText } from ".";
@@ -94,11 +94,27 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public async componentDidMount() {
         try {
-            this.visitor = await this.client.authenticate({
-                strategy: "api-key",
-                apiKey: this.props.apiKey,
-                visitorName: this.props.userName,
-            });
+            const oldVisitor: any = SessionStorages.get(Constants.StorageKeys.VISITOR);
+            if (oldVisitor) {
+                this.visitor = await this.client.authenticate({
+                    strategy: "api-key",
+                    apiKey: this.props.apiKey,
+                    visitorName: this.props.userName,
+                    visitorId: this.props.userName,
+                    _id: oldVisitor._id
+                });
+                if (this.visitor.messages && this.visitor.messages.length > 0) {
+                    this.visitor.messages.forEach(this.loadMessages);
+                }
+            } else {
+                this.visitor = await this.client.authenticate({
+                    strategy: "api-key",
+                    apiKey: this.props.apiKey,
+                    visitorName: this.props.userName,
+                    visitorId: this.props.userName,
+                });
+            }
+            SessionStorages.set(Constants.StorageKeys.VISITOR, this.visitor);
         } catch (error) {
             console.log(error);
             this.props.navigation.goBack();
@@ -135,7 +151,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             await this.client.service("messages").create({
                 channelId: this.visitor.channelId,
                 threadId: this.visitor.threadId,
-                senderId: this.visitor.visitorId,
+                senderId: this.visitor._id,
                 messageType: 1,
                 message: (Helpers.isString(message) && message) ? message : this.state.currentContent
             });
@@ -158,8 +174,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const botAvatar = this.props.botAvatar;
         const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
-            <SafeAreaView style={Styles.appContainer}>
-                <View style={Styles.fullSize}>
+            <View style={Styles.fullSize}>
+                <SafeAreaView style={Styles.appContainer}>
                     <ControlHeader
                         style={{ backgroundColor: headerColor }}
                         title={this.props.title}
@@ -219,7 +235,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                     }
                                     {
                                         list.map((item: IMessage, index) => {
-                                            if (item.isChatbot === 1 || item.senderId !== this.visitor.visitorId) {
+                                            if (item.isChatbot === 1 || item.senderId !== this.visitor._id) {
                                                 let uri = item.isChatbot === 1 ? this.props.botAvatar : item.avatar;
                                                 uri = !uri ? this.props.botAvatar : uri;
                                                 return (
@@ -275,7 +291,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                 <TouchableOpacity onPress={() => Linking.openURL("http://maysoft.io/")}>
                                     <ControlText
                                         style={[Styles.text, Styles.textCenter, Styles.mb10, { color: bodyColor !== "#ffffff" ? messageBoxColor : "#333" }]}>
-                                        {"Power by maysoft.io"}
+                                        {"Powered by maysoft.io"}
                                     </ControlText>
                                 </TouchableOpacity>
                                 <View style={[
@@ -289,7 +305,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                     }, Styles.alignCenter]}>
                                     <TextInput
                                         autoFocus
-                                        autoCorrect={false}
+                                        autoCorrect={false} 
                                         multiline={false}
                                         style={[{ flex: 0.85 }, Styles.textBoldDefault, Styles.mr16]}
                                         placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE) || "Input message..."}
@@ -309,8 +325,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                             </View>
                         </View>
                     </KeyboardAvoidingView>
-                </View>
-            </SafeAreaView>
+                </SafeAreaView>
+            </View>
         );
     }
 }

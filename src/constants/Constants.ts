@@ -21,7 +21,7 @@ const Constants = {
      */
     Api: {
         /** Root URL of Api Server */
-        BASE_URL: "http://chat-api.maysoft.io:3033", // Server Real
+        BASE_URL: "http://chat-api.maysoft.io:3033/", // Server Real
         CLIENT_CERT: null,
         CLIENT_ID: null,
         CLIENT_KEY: null,
@@ -172,10 +172,7 @@ const Constants = {
      * Storage keys
      */
     StorageKeys: {
-        APP_SETTINGS: "APP_SETTINGS",
-        TRANSFER_PARAMS: "TRANSFER_PARAMS",
-        USER_PROFILE: "USER_PROFILE",
-        USER_INFO: "USER_INFO",
+       VISITOR: "visitor"
     },
 
     /**
