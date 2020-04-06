@@ -12,7 +12,8 @@ import {
     SafeAreaView,
 } from "react-native";
 
-import { Styles, Helpers, SessionStorages } from "../commons";
+import { Styles, Helpers, } from "../commons";
+import SessionStorages from "../commons/SessionStorages";
 import ControlHeader from "./ControlHeader";
 import ControlCircle from "./ControlCircle";
 import { ControlText } from ".";
