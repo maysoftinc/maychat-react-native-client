@@ -175,7 +175,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const botAvatar = this.props.botAvatar;
         const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
-            <View style={Styles.fullSize}>
+            <>
+                <View style={[localStyles.header, { backgroundColor: headerColor }]} />
                 <SafeAreaView style={Styles.appContainer}>
                     <ControlHeader
                         style={{ backgroundColor: headerColor }}
@@ -193,6 +194,9 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                             <ScrollView
                                 style={[{ flex: 0.77 }]}
                                 ref={(ref: any) => { this.ref = ref; }}
+                                onLayout={() => {
+                                    this.ref.scrollToEnd({ animated: false });
+                                }}
                                 onContentSizeChange={() => {
                                     this.ref.scrollToEnd({ animated: true });
                                 }}>
@@ -306,10 +310,10 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                     }, Styles.alignCenter]}>
                                     <TextInput
                                         autoFocus
-                                        autoCorrect={false} 
+                                        autoCorrect={false}
                                         multiline={false}
                                         style={[{ flex: 0.85 }, Styles.textBoldDefault, Styles.mr16]}
-                                        placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE) || "Input message..."}
+                                        placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE)}
                                         value={this.state.currentContent}
                                         onChangeText={(currentContent: string) => {
                                             this.setState({ currentContent });
@@ -319,7 +323,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                         onPress={() => this.onSend()}>
                                         <ControlText style={Styles.textRight}
                                             fontSize={ControlText.FontSize.X_LARGE}>
-                                            {(Strings && Strings.ChatBot.SEND) || "Send"}
+                                            {(Strings && Strings.ChatBot.SEND)}
                                         </ControlText>
                                     </TouchableOpacity>
                                 </View>
@@ -327,7 +331,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                         </View>
                     </KeyboardAvoidingView>
                 </SafeAreaView>
-            </View>
+            </>
         );
     }
 }
@@ -341,5 +345,11 @@ const localStyles = StyleSheet.create({
     },
     p16: {
         padding: 16,
+    },
+    header: {
+        width: "100%",
+        height: Constants.Styles.HEADER_BACKGROUND_HEIGHT,
+        position: "absolute",
+        top: 0
     }
 });

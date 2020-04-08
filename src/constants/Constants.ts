@@ -5,6 +5,7 @@ import {
     Platform,
     StatusBar,
 } from "react-native";
+import StaticSafeAreaInsets from 'react-native-static-safe-area-insets';
 
 // import Strings from "./Strings";
 // import DeviceInfo from "react-native-device-info";
@@ -130,6 +131,7 @@ const Constants = {
         // =====================================================================
         HEADER_HEIGHT: IS_PLATFORM_IOS ? 60 : (46 + (StatusBar.currentHeight || 0)),
         STATUS_BAR_HEIGHT: IS_PLATFORM_IOS ? 20 : (StatusBar.currentHeight || 0),
+        HEADER_BACKGROUND_HEIGHT: (164 - 44) + StaticSafeAreaInsets.safeAreaInsetsTop,
 
         // =====================================================================
         // Console log style
