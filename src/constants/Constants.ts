@@ -132,6 +132,12 @@ const Constants = {
         HEADER_HEIGHT: IS_PLATFORM_IOS ? 60 : (46 + (StatusBar.currentHeight || 0)),
         STATUS_BAR_HEIGHT: IS_PLATFORM_IOS ? 20 : (StatusBar.currentHeight || 0),
         HEADER_BACKGROUND_HEIGHT: (164 - 44) + StaticSafeAreaInsets.safeAreaInsetsTop,
+        SAFE_AREA_INSETS: {
+            bottom: StaticSafeAreaInsets.safeAreaInsetsBottom,
+            top: StaticSafeAreaInsets.safeAreaInsetsTop,
+            left: StaticSafeAreaInsets.safeAreaInsetsLeft,
+            right: StaticSafeAreaInsets.safeAreaInsetsRight
+        },
 
         // =====================================================================
         // Console log style

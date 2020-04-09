@@ -13,7 +13,6 @@ import {
 } from "react-native";
 
 import { Styles, Helpers, } from "../commons";
-import SessionStorages from "../commons/SessionStorages";
 import ControlHeader from "./ControlHeader";
 import ControlCircle from "./ControlCircle";
 import { ControlText } from ".";
@@ -27,7 +26,8 @@ export interface IProps extends ViewProps {
     navigation?: any;
     botAvatar?: any;
     myAvatar?: any;
-    apiKey?: string;
+    apiKey: string;
+    projectId: string;
     tags?: ITag[];
     userName: string;
     initMessage?: string;
@@ -46,6 +46,8 @@ export interface IProps extends ViewProps {
     messageBoxColor?: string;
     licenseKey?: string;
     language: "vi" | "en";
+    oldVisitorId?: string;
+    onRefreshVisitorId?: (id: string) => void;
 }
 
 interface IStateProps extends ViewProps {
@@ -95,14 +97,15 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public async componentDidMount() {
         try {
-            const oldVisitor: any = SessionStorages.get(Constants.StorageKeys.VISITOR);
-            if (oldVisitor) {
+            const oldVisitorId = this.props.oldVisitorId;
+            const visitorId = `${this.props.userName}@${this.props.projectId}`;
+            if (oldVisitorId) {
                 this.visitor = await this.client.authenticate({
                     strategy: "api-key",
                     apiKey: this.props.apiKey,
                     visitorName: this.props.userName,
-                    visitorId: this.props.userName,
-                    _id: oldVisitor._id
+                    visitorId,
+                    _id: oldVisitorId
                 });
                 if (this.visitor.messages && this.visitor.messages.length > 0) {
                     this.visitor.messages.forEach(this.loadMessages);
@@ -112,13 +115,19 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                     strategy: "api-key",
                     apiKey: this.props.apiKey,
                     visitorName: this.props.userName,
-                    visitorId: this.props.userName,
+                    visitorId,
                 });
+                this.onRefreshVisitorId(this.visitor._id);
             }
-            SessionStorages.set(Constants.StorageKeys.VISITOR, this.visitor);
         } catch (error) {
             console.log(error);
             this.props.navigation.goBack();
+        }
+    }
+
+    public onRefreshVisitorId = (id: string) => {
+        if (this.props.onRefreshVisitorId && Helpers.isFunction(this.props.onRefreshVisitorId)) {
+            this.props.onRefreshVisitorId(id);
         }
     }
 
@@ -175,7 +184,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const botAvatar = this.props.botAvatar;
         const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
-            <>
+            <View style={Styles.fullSize}>
                 <View style={[localStyles.header, { backgroundColor: headerColor }]} />
                 <SafeAreaView style={Styles.appContainer}>
                     <ControlHeader
@@ -331,7 +340,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                         </View>
                     </KeyboardAvoidingView>
                 </SafeAreaView>
-            </>
+                <View style={[localStyles.footer, { backgroundColor: bodyColor }]} />
+            </View>
         );
     }
 }
@@ -351,5 +361,12 @@ const localStyles = StyleSheet.create({
         height: Constants.Styles.HEADER_BACKGROUND_HEIGHT,
         position: "absolute",
         top: 0
+    },
+    footer: {
+        height: Constants.Styles.SAFE_AREA_INSETS.bottom,
+        width: "100%",
+        position: "absolute",
+        bottom: 0,
+        zIndex: -1
     }
 });
