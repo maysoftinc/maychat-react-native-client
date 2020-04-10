@@ -321,6 +321,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                         autoFocus
                                         autoCorrect={false}
                                         multiline={false}
+                                        autoCapitalize="none"
                                         style={[{ flex: 0.85 }, Styles.textBoldDefault, Styles.mr16]}
                                         placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE)}
                                         value={this.state.currentContent}
