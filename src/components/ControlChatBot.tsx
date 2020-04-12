@@ -125,6 +125,10 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         }
     }
 
+    public async componentWillUnmount() {
+        this.socket.close();
+    }
+
     public onRefreshVisitorId = (id: string) => {
         if (this.props.onRefreshVisitorId && Helpers.isFunction(this.props.onRefreshVisitorId)) {
             this.props.onRefreshVisitorId(id);
