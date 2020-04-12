@@ -159,6 +159,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             }
             // Create a new message and then clear the input field
             await this.client.service("messages").create({
+                projectId: this.visitor.projectId,
                 channelId: this.visitor.channelId,
                 threadId: this.visitor.threadId,
                 senderId: this.visitor._id,
