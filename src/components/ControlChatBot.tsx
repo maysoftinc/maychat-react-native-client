@@ -10,6 +10,7 @@ import {
     ScrollView,
     Linking,
     SafeAreaView,
+    Alert,
 } from "react-native";
 
 import { Styles, Helpers, } from "../commons";
@@ -120,9 +121,13 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                 this.onRefreshVisitorId(this.visitor._id);
             }
         } catch (error) {
-            console.log(error);
-            this.props.navigation.goBack();
+            this.onError(error);
         }
+    }
+
+    public async componentWillUnmount() {
+        this.client.service("messages").off("created", this.loadMessages);
+        this.socket.close();
     }
 
     public onRefreshVisitorId = (id: string) => {
@@ -131,8 +136,22 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         }
     }
 
+    public onError = async (error: any) => {
+        console.log(error);
+        Alert.alert(Strings.App.CommonError);
+        try {
+            await this.client.reAuthenticate(true);
+        }
+        catch (err) {
+            console.log(err);
+            Alert.alert(Strings.App.CommonError);
+            this.props.navigation.goBack();
+        }
+    }
+
     public loadMessages = async (message: any) => {
         try {
+            console.log(message);
             let messageList: IMessage[] = this.state.messageList || [];
             // The user that sent this message (added by the populate-user hook)
             const { user = {} } = message;
@@ -148,7 +167,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                 messageList: [...messageList]
             });
         } catch (error) {
-            console.error(error);
+            this.onError(error);
         }
     };
 
@@ -159,6 +178,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             }
             // Create a new message and then clear the input field
             await this.client.service("messages").create({
+                projectId: this.visitor.projectId,
                 channelId: this.visitor.channelId,
                 threadId: this.visitor.threadId,
                 senderId: this.visitor._id,
@@ -167,7 +187,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             });
             this.setState({ currentContent: "" });
         } catch (error) {
-            console.error(error);
+            this.onError(error);
         }
     }
 
@@ -178,7 +198,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const sendMessageColor = this.props.licenseKey ? (this.props.sendMessageColor || "#ADD8E6") : "#ADD8E6";
         const receiveMessageColor = this.props.licenseKey ? (this.props.receiveMessageColor || "#F2F2F2") : "#F2F2F2";
         const tagColor = this.props.licenseKey ? (this.props.tagColor || "#F2F2F2") : "#F2F2F2";
-        const tagSelectedColor = this.props.licenseKey ? (this.props.tagSelectedColor || "#333") : "#333";
+        const tagSelectedColor = this.props.licenseKey ? (this.props.tagSelectedColor || "#ADD8E6") : "#ADD8E6";
         const tagLabelSelectedColor = this.props.licenseKey ? (this.props.tagLabelSelectedColor || "#ffffff") : "#ffffff";
         const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";
         const botAvatar = this.props.botAvatar;
@@ -239,7 +259,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                                     itemStyle={[localStyles.item, { backgroundColor: tagColor }]}
                                                     itemLabelStyle={Styles.textDefault}
                                                     itemStyleSelected={{ backgroundColor: tagSelectedColor }}
-                                                    itemLabelStyleSelected={{ backgroundColor: tagLabelSelectedColor }}
+                                                    itemLabelStyleSelected={{ color: tagLabelSelectedColor }}
                                                     onItemPress={(item: any) => {
                                                         this.onSend(item.label);
                                                     }}

@@ -3,7 +3,7 @@
 // =============================================================================                        
 export default {
     App: {
-
+        CommonError: "An error occurred. Please try again."
     },
     ChatBot: {
         SEND: "Send",

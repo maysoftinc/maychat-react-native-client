@@ -4,7 +4,7 @@
 // =============================================================================
 export default {
     App: {
-
+        CommonError: "Đã xảy ra lỗi. Vui lòng thử lại."
     },
     ChatBot: {
         SEND: "Gửi",
