@@ -11,6 +11,7 @@ import {
     Linking,
     SafeAreaView,
     Alert,
+    StatusBar,
 } from "react-native";
 
 import { Styles, Helpers, } from "../commons";
@@ -127,7 +128,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public async componentWillUnmount() {
         this.client.service("messages").off("created", this.loadMessages);
-        this.socket.close();
+        // this.socket.close();
     }
 
     public onRefreshVisitorId = (id: string) => {
@@ -138,13 +139,13 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public onError = async (error: any) => {
         console.log(error);
-        Alert.alert(Strings.App.CommonError);
+        Alert.alert(Strings && Strings.App.CommonError);
         try {
             await this.client.reAuthenticate(true);
         }
         catch (err) {
             console.log(err);
-            Alert.alert(Strings.App.CommonError);
+            Alert.alert(Strings && Strings.App.CommonError);
             this.props.navigation.goBack();
         }
     }
@@ -204,7 +205,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const botAvatar = this.props.botAvatar;
         const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
         return (
-            <View style={Styles.fullSize}>
+            <View style={[Styles.fullSize, { backgroundColor: bodyColor }]}>
+                <StatusBar hidden={false} translucent={true} barStyle="light-content" />
                 <View style={[localStyles.header, { backgroundColor: headerColor }]} />
                 <SafeAreaView style={Styles.appContainer}>
                     <ControlHeader
@@ -221,8 +223,9 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                         style={Styles.appContainer}>
                         <View style={[Styles.appContainer, localStyles.p16, { backgroundColor: bodyColor }]}>
                             <ScrollView
-                                style={[{ flex: 0.77 }]}
+                                style={{ flex: 1 }}
                                 ref={(ref: any) => { this.ref = ref; }}
+                                showsVerticalScrollIndicator={false}
                                 onLayout={() => {
                                     this.ref.scrollToEnd({ animated: false });
                                 }}
@@ -318,10 +321,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                     }
                                 </View>
                             </ScrollView>
-                            <View
-                                style={[{
-                                    flex: 0.23,
-                                }]}>
+                            <View>
                                 <TouchableOpacity onPress={() => Linking.openURL("http://maysoft.io/")}>
                                     <ControlText
                                         style={[Styles.text, Styles.textCenter, Styles.mb10, { color: bodyColor !== "#ffffff" ? messageBoxColor : "#333" }]}>
@@ -335,21 +335,20 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                         backgroundColor: messageBoxColor,
                                         borderRadius: 76 / 2,
                                         justifyContent: "space-between",
-                                        padding: 8,
                                     }, Styles.alignCenter]}>
                                     <TextInput
                                         autoFocus
                                         autoCorrect={false}
                                         multiline={false}
                                         autoCapitalize="none"
-                                        style={[{ flex: 0.85 }, Styles.textBoldDefault, Styles.mr16]}
+                                        style={[{ flex: 0.8, padding: 12 }, Styles.textBoldDefault, Styles.mr16]}
                                         placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE)}
                                         value={this.state.currentContent}
                                         onChangeText={(currentContent: string) => {
                                             this.setState({ currentContent });
                                         }}
                                     />
-                                    <TouchableOpacity style={[Styles.w10pc, Styles.mr16, { flex: 0.15 }]}
+                                    <TouchableOpacity style={[{ flex: 0.2, padding: 12 }]}
                                         onPress={() => this.onSend()}>
                                         <ControlText style={Styles.textRight}
                                             fontSize={ControlText.FontSize.X_LARGE}>
