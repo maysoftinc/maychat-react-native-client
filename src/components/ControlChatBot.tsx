@@ -223,6 +223,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                 onContentSizeChange={() => {
                                     this.ref.scrollToEnd({ animated: true });
                                 }}
+                                showsVerticalScrollIndicator={false}
                                 data={list}
                                 renderItem={({ item, index }: any) => this._renderItem(item, index)}
                                 keyExtractor={(item: any) => item.createTime}
