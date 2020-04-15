@@ -11,7 +11,7 @@ import {
     Linking,
     SafeAreaView,
     Alert,
-    StatusBar,
+    FlatList
 } from "react-native";
 
 import { Styles, Helpers, } from "../commons";
@@ -191,24 +191,16 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             this.onError(error);
         }
     }
-
+    
     public render() {
         const list = this.state.messageList || [];
         const headerColor = this.props.headerColor || "#ADD8E6";
         const bodyColor = this.props.bodyColor || "#ffffff";
-        const sendMessageColor = this.props.licenseKey ? (this.props.sendMessageColor || "#ADD8E6") : "#ADD8E6";
-        const receiveMessageColor = this.props.licenseKey ? (this.props.receiveMessageColor || "#F2F2F2") : "#F2F2F2";
-        const tagColor = this.props.licenseKey ? (this.props.tagColor || "#F2F2F2") : "#F2F2F2";
-        const tagSelectedColor = this.props.licenseKey ? (this.props.tagSelectedColor || "#ADD8E6") : "#ADD8E6";
-        const tagLabelSelectedColor = this.props.licenseKey ? (this.props.tagLabelSelectedColor || "#ffffff") : "#ffffff";
-        const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";
-        const botAvatar = this.props.botAvatar;
-        const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
+        const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";  
         return (
-            <View style={[Styles.fullSize, { backgroundColor: bodyColor }]}>
-                <StatusBar hidden={false} translucent={true} barStyle="light-content" />
+            <View style={[Styles.fullSize, {backgroundColor: bodyColor}]}>
                 <View style={[localStyles.header, { backgroundColor: headerColor }]} />
-                <SafeAreaView style={Styles.appContainer}>
+                <SafeAreaView style={[Styles.appContainer]}>
                     <ControlHeader
                         style={{ backgroundColor: headerColor }}
                         title={this.props.title}
@@ -222,105 +214,20 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                         keyboardVerticalOffset={10}
                         style={Styles.appContainer}>
                         <View style={[Styles.appContainer, localStyles.p16, { backgroundColor: bodyColor }]}>
-                            <ScrollView
-                                style={{ flex: 1 }}
+                            <FlatList 
+                                style={[{ flex: 1 }]}
                                 ref={(ref: any) => { this.ref = ref; }}
-                                showsVerticalScrollIndicator={false}
                                 onLayout={() => {
                                     this.ref.scrollToEnd({ animated: false });
                                 }}
                                 onContentSizeChange={() => {
                                     this.ref.scrollToEnd({ animated: true });
-                                }}>
-                                <View style={Styles.appContainer}>
-                                    {
-                                        (!list || list.length === 0)
-                                        &&
-                                        <View style={[Styles.vertical]}>
-                                            <View
-                                                style={[Styles.horizontal]}>
-                                                {
-                                                    Helpers.isString(botAvatar) ?
-                                                        <ControlCircle size={30}
-                                                            source={{ uri: botAvatar }} />
-                                                        :
-                                                        <ControlCircle size={30}
-                                                            source={botAvatar} />
-                                                }
-                                                <View style={[
-                                                    Styles.form, Styles.ml16,
-                                                    {
-                                                        backgroundColor: receiveMessageColor,
-                                                        maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
-                                                    }]}>
-                                                    <ControlText>{this.props.initMessage}</ControlText>
-                                                </View>
-                                            </View>
-                                            <View style={Styles.mt16}>
-                                                <TagSelect
-                                                    data={this.props.tags}
-                                                    itemStyle={[localStyles.item, { backgroundColor: tagColor }]}
-                                                    itemLabelStyle={Styles.textDefault}
-                                                    itemStyleSelected={{ backgroundColor: tagSelectedColor }}
-                                                    itemLabelStyleSelected={{ color: tagLabelSelectedColor }}
-                                                    onItemPress={(item: any) => {
-                                                        this.onSend(item.label);
-                                                    }}
-                                                />
-                                            </View>
-                                        </View>
-                                    }
-                                    {
-                                        list.map((item: IMessage, index) => {
-                                            if (item.isChatbot === 1 || item.senderId !== this.visitor._id) {
-                                                let uri = item.isChatbot === 1 ? this.props.botAvatar : item.avatar;
-                                                uri = !uri ? this.props.botAvatar : uri;
-                                                return (
-                                                    <View key={index}
-                                                        style={[Styles.horizontal, index > 0 ? Styles.mt25 : {}, Styles.alignEnd]}>
-                                                        {
-                                                            Helpers.isString(uri) ?
-                                                                <ControlCircle size={30}
-                                                                    source={{ uri }} />
-                                                                :
-                                                                <ControlCircle size={30}
-                                                                    source={uri} />
-                                                        }
-                                                        <View style={[
-                                                            Styles.form, Styles.ml16,
-                                                            {
-                                                                backgroundColor: receiveMessageColor,
-                                                                maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
-                                                            }]}>
-                                                            <ControlText>{item.message}</ControlText>
-                                                        </View>
-                                                    </View>
-                                                )
-                                            }
-                                            return (
-                                                <View key={index}
-                                                    style={[Styles.w100pc, Styles.alignEnd, index > 0 ? Styles.mt25 : {}]}>
-                                                    <View style={[Styles.horizontal, Styles.alignEnd]}>
-                                                        <View style={[Styles.form, Styles.mr16, { backgroundColor: sendMessageColor, maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16 }]}>
-                                                            <ControlText>
-                                                                {item.message}
-                                                            </ControlText>
-                                                        </View>
-                                                        {
-                                                            Helpers.isString(myAvatar) ?
-                                                                <ControlCircle size={30}
-                                                                    source={{ uri: myAvatar }} />
-                                                                :
-                                                                <ControlCircle size={30}
-                                                                    source={myAvatar} />
-                                                        }
-                                                    </View>
-                                                </View>
-                                            )
-                                        })
-                                    }
-                                </View>
-                            </ScrollView>
+                                }}
+                                data={list}
+                                renderItem={({ item, index }: any) => this._renderItem(item, index)}
+                                keyExtractor={(item: any) => item.createTime}
+                                ListHeaderComponent={this._renderHeader}
+                            />
                             <View>
                                 <TouchableOpacity onPress={() => Linking.openURL("http://maysoft.io/")}>
                                     <ControlText
@@ -330,25 +237,26 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                 </TouchableOpacity>
                                 <View style={[
                                     Styles.horizontal,
-                                    Styles.justifyEnd,
                                     {
                                         backgroundColor: messageBoxColor,
                                         borderRadius: 76 / 2,
                                         justifyContent: "space-between",
+                                        paddingHorizontal: 24,
+                                        paddingVertical: 10,
                                     }, Styles.alignCenter]}>
                                     <TextInput
                                         autoFocus
                                         autoCorrect={false}
                                         multiline={false}
                                         autoCapitalize="none"
-                                        style={[{ flex: 0.8, padding: 12 }, Styles.textBoldDefault, Styles.mr16]}
+                                        style={[{ minHeight: 36, flex: 1,}, Styles.textBoldDefault, Styles.mr16]}
                                         placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE)}
                                         value={this.state.currentContent}
                                         onChangeText={(currentContent: string) => {
                                             this.setState({ currentContent });
                                         }}
                                     />
-                                    <TouchableOpacity style={[{ flex: 0.2, padding: 12 }]}
+                                    <TouchableOpacity
                                         onPress={() => this.onSend()}>
                                         <ControlText style={Styles.textRight}
                                             fontSize={ControlText.FontSize.X_LARGE}>
@@ -361,6 +269,103 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                     </KeyboardAvoidingView>
                 </SafeAreaView>
                 <View style={[localStyles.footer, { backgroundColor: bodyColor }]} />
+            </View>
+        );
+    }
+    _renderHeader = () => {
+        if (this.state.messageList && this.state.messageList?.length > 0) {
+            return null;
+        }
+        const receiveMessageColor = this.props.licenseKey ? (this.props.receiveMessageColor || "#F2F2F2") : "#F2F2F2";
+        const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";
+        const botAvatar = this.props.botAvatar;
+        const tagColor = this.props.licenseKey ? (this.props.tagColor || "#F2F2F2") : "#F2F2F2";
+        const tagSelectedColor = this.props.licenseKey ? (this.props.tagSelectedColor || "#ADD8E6") : "#ADD8E6";
+        const tagLabelSelectedColor = this.props.licenseKey ? (this.props.tagLabelSelectedColor || "#ffffff") : "#ffffff";
+        return (
+            <View style={[Styles.vertical]}>
+                <View
+                    style={[Styles.horizontal]}>
+                    {
+                        Helpers.isString(botAvatar) ?
+                            <ControlCircle size={30}
+                                source={{ uri: botAvatar }} />
+                            :
+                            <ControlCircle size={30}
+                                source={botAvatar} />
+                    }
+                    <View style={[
+                        Styles.form, Styles.ml16,
+                        {
+                            backgroundColor: receiveMessageColor,
+                            maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
+                        }]}>
+                        <ControlText>{this.props.initMessage}</ControlText>
+                    </View>
+                </View>
+                <View style={Styles.mt16}>
+                    <TagSelect
+                        data={this.props.tags}
+                        itemStyle={[localStyles.item, { backgroundColor: tagColor }]}
+                        itemLabelStyle={Styles.textDefault}
+                        itemStyleSelected={{ backgroundColor: tagSelectedColor }}
+                        itemLabelStyleSelected={{ color: tagLabelSelectedColor }}
+                        onItemPress={(item: any) => {
+                            this.onSend(item.label);
+                        }}
+                    />
+                </View>
+            </View>
+        )
+    }
+
+    _renderItem = (item: any, index: number) => {
+        const receiveMessageColor = this.props.licenseKey ? (this.props.receiveMessageColor || "#F2F2F2") : "#F2F2F2";
+        const sendMessageColor = this.props.licenseKey ? (this.props.sendMessageColor || "#ADD8E6") : "#ADD8E6";
+        const myAvatar = this.props.myAvatar || require("../assets/images/default_avatar.png");
+        if (item.isChatbot === 1 || item.senderId !== this.visitor._id) {
+            let uri = item.isChatbot === 1 ? this.props.botAvatar : item.avatar;
+            uri = !uri ? this.props.botAvatar : uri;
+            return (
+                <View key={index}
+                    style={[Styles.horizontal, index > 0 ? Styles.mt25 : {}, Styles.alignEnd]}>
+                    {
+                        Helpers.isString(uri) ?
+                            <ControlCircle size={30}
+                                source={{ uri }} />
+                            :
+                            <ControlCircle size={30}
+                                source={uri} />
+                    }
+                    <View style={[
+                        Styles.form, Styles.ml16,
+                        {
+                            backgroundColor: receiveMessageColor,
+                            maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
+                        }]}>
+                        <ControlText>{item.message}</ControlText>
+                    </View>
+                </View>
+            )
+        }
+        return (
+            <View key={index}
+                style={[Styles.w100pc, Styles.alignEnd, index > 0 ? Styles.mt25 : {}]}>
+                <View style={[Styles.horizontal, Styles.alignEnd]}>
+                    <View style={[Styles.form, Styles.mr16, { backgroundColor: sendMessageColor, maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16 }]}>
+                        <ControlText>
+                            {item.message}
+                        </ControlText>
+                    </View>
+                    {
+                        Helpers.isString(myAvatar) ?
+                            <ControlCircle size={30}
+                                source={{ uri: myAvatar }} />
+                            :
+                            <ControlCircle size={30}
+                                source={myAvatar} />
+                    }
+                </View>
             </View>
         );
     }
