@@ -75,7 +75,7 @@ interface ITag {
 
 export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
     public client: any = feathers();
-    private socket: any = io(Constants.Api.BASE_URL, {
+    private socket: any = io(Helpers.isAndroid() ? Constants.Api.ANDROID_BASE_URL : Constants.Api.IOS_BASE_URL, {
         transports: ['websocket']
     });
     private visitor: any;
