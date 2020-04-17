@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     AsyncStorage,
     KeyboardAvoidingView,
-    ScrollView,
+    StatusBar,
     Linking,
     SafeAreaView,
     Alert,
@@ -75,7 +75,7 @@ interface ITag {
 
 export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
     public client: any = feathers();
-    private socket: any = io(Helpers.isAndroid() ? Constants.Api.ANDROID_BASE_URL : Constants.Api.IOS_BASE_URL, {
+    private socket: any = io(Constants.Api.BASE_URL, {
         transports: ['websocket']
     });
     private visitor: any;
@@ -199,6 +199,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";  
         return (
             <View style={[Styles.fullSize, {backgroundColor: bodyColor}]}>
+                <StatusBar hidden={false} translucent={true} barStyle="light-content"/>
                 <View style={[localStyles.header, { backgroundColor: headerColor }]} />
                 <SafeAreaView style={[Styles.appContainer]}>
                     <ControlHeader
