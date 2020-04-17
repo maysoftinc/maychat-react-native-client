@@ -152,7 +152,6 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public loadMessages = async (message: any) => {
         try {
-            console.log(message);
             let messageList: IMessage[] = this.state.messageList || [];
             // The user that sent this message (added by the populate-user hook)
             const { user = {} } = message;
@@ -191,15 +190,15 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             this.onError(error);
         }
     }
-    
+
     public render() {
         const list = this.state.messageList || [];
         const headerColor = this.props.headerColor || "#ADD8E6";
         const bodyColor = this.props.bodyColor || "#ffffff";
-        const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";  
+        const messageBoxColor = this.props.licenseKey ? (this.props.messageBoxColor || "#F2F2F2") : "#F2F2F2";
         return (
-            <View style={[Styles.fullSize, {backgroundColor: bodyColor}]}>
-                <StatusBar hidden={false} translucent={true} barStyle="light-content"/>
+            <View style={[Styles.fullSize, { backgroundColor: bodyColor }]}>
+                <StatusBar hidden={false} translucent={true} barStyle="light-content" />
                 <View style={[localStyles.header, { backgroundColor: headerColor }]} />
                 <SafeAreaView style={[Styles.appContainer]}>
                     <ControlHeader
@@ -215,7 +214,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                         keyboardVerticalOffset={10}
                         style={Styles.appContainer}>
                         <View style={[Styles.appContainer, localStyles.p16, { backgroundColor: bodyColor }]}>
-                            <FlatList 
+                            <FlatList
                                 style={[{ flex: 1 }]}
                                 ref={(ref: any) => { this.ref = ref; }}
                                 onLayout={() => {
@@ -243,15 +242,15 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                         backgroundColor: messageBoxColor,
                                         borderRadius: 76 / 2,
                                         justifyContent: "space-between",
-                                        paddingHorizontal: 24,
-                                        paddingVertical: 10,
+                                        paddingVertical: 4,
+                                        paddingHorizontal: 10,
                                     }, Styles.alignCenter]}>
                                     <TextInput
                                         autoFocus
                                         autoCorrect={false}
                                         multiline={false}
                                         autoCapitalize="none"
-                                        style={[{ minHeight: 36, flex: 1,}, Styles.textBoldDefault, Styles.mr16]}
+                                        style={[{ minHeight: 36, flex: 1 }, Styles.textBoldDefault]}
                                         placeholder={(Strings && Strings.ChatBot.INPUT_MESSAGE)}
                                         value={this.state.currentContent}
                                         onChangeText={(currentContent: string) => {
@@ -259,6 +258,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                                         }}
                                     />
                                     <TouchableOpacity
+                                        style={{ padding: 10 }}
                                         onPress={() => this.onSend()}>
                                         <ControlText style={Styles.textRight}
                                             fontSize={ControlText.FontSize.X_LARGE}>
