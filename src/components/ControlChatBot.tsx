@@ -82,7 +82,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
     private ref: any | null;
     constructor(props: any) {
         super(props);
-        this.client.configure(feathers.socketio(this.socket));
+        this.client.configure(feathers.socketio(this.socket), { timeout: 30000 });
         this.client.configure(feathers.authentication({
             storage: AsyncStorage as any
         }));
@@ -139,14 +139,12 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public onError = async (error: any) => {
         console.log(error);
-        Alert.alert(Strings && Strings.App.CommonError);
         try {
             await this.client.reAuthenticate(true);
         }
         catch (err) {
             console.log(err);
             Alert.alert(Strings && Strings.App.CommonError);
-            this.props.navigation.goBack();
         }
     }
 
