@@ -22,6 +22,7 @@ import { Constants, Strings } from "../constants";
 import feathers from "@feathersjs/client";
 import io from "socket.io-client";
 import { TagSelect } from "react-native-tag-select";
+import Toast from "react-native-simple-toast";
 
 export interface IProps extends ViewProps {
     title?: string;
@@ -76,13 +77,14 @@ interface ITag {
 export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
     public client: any = feathers();
     private socket: any = io(Constants.Api.BASE_URL, {
-        transports: ['websocket']
+        transports: ['websocket'],
+        timeout: Constants.Api.TIMEOUT
     });
     private visitor: any;
     private ref: any | null;
     constructor(props: any) {
         super(props);
-        this.client.configure(feathers.socketio(this.socket), { timeout: 30000 });
+        this.client.configure(feathers.socketio(this.socket), { pingTimeout: Constants.Api.TIMEOUT });
         this.client.configure(feathers.authentication({
             storage: AsyncStorage as any
         }));
@@ -140,11 +142,11 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
     public onError = async (error: any) => {
         console.log(error);
         try {
+            Toast.showWithGravity("Connecting...", Toast.LONG, Toast.TOP);
             await this.client.reAuthenticate(true);
-        }
-        catch (err) {
+        } catch (err) {
             console.log(err);
-            Alert.alert(Strings && Strings.App.CommonError);
+            Toast.show(Strings && Strings.App.CommonError, Toast.SHORT);
         }
     }
 
