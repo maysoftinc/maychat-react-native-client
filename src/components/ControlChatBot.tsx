@@ -10,7 +10,6 @@ import {
     StatusBar,
     Linking,
     SafeAreaView,
-    Alert,
     FlatList
 } from "react-native";
 
@@ -22,7 +21,8 @@ import { Constants, Strings } from "../constants";
 import feathers from "@feathersjs/client";
 import io from "socket.io-client";
 import { TagSelect } from "react-native-tag-select";
-import Toast from "react-native-root-toast";
+import Toast from "react-native-tiny-toast";
+import Hyperlink from "react-native-hyperlink";
 
 export interface IProps extends ViewProps {
     title?: string;
@@ -142,10 +142,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         console.log(error);
         let toast = Toast.show("Connecting...", {
             duration: Constants.Api.TIMEOUT,
-            position: Toast.positions.TOP,
-            shadow: true,
-            animation: true,
-            delay: 0
+            position: Constants.Styles.HEADER_HEIGHT
         });
         try {
             await this.client.reAuthenticate(true);
@@ -154,12 +151,9 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
             console.log(err);
             Toast.hide(toast);
             Toast.show(Strings && Strings.App.CommonError, {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                delay: 0
-            })
+                duration: Toast.duration.SHORT,
+                position: Toast.position.CENTER,
+            });
         }
     }
 
@@ -334,6 +328,15 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
         )
     }
 
+    _renderMessageContent = (item: any) => {
+        return (
+            <Hyperlink onPress={(url, text) => Linking.openURL(url)}
+                linkStyle={{ color: "#2980b9", fontSize: Constants.Styles.FONT_SIZE_MEDIUM }}>
+                <ControlText>{Helpers.decodeHtmlElement(item.message)}</ControlText>
+            </Hyperlink>
+        );
+    }
+
     _renderItem = (item: any, index: number) => {
         const receiveMessageColor = this.props.licenseKey ? (this.props.receiveMessageColor || "#F2F2F2") : "#F2F2F2";
         const sendMessageColor = this.props.licenseKey ? (this.props.sendMessageColor || "#ADD8E6") : "#ADD8E6";
@@ -358,7 +361,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                             backgroundColor: receiveMessageColor,
                             maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16
                         }]}>
-                        <ControlText>{item.message}</ControlText>
+                        {this._renderMessageContent(item)}
                     </View>
                 </View>
             )
@@ -368,9 +371,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                 style={[Styles.w100pc, Styles.alignEnd, index > 0 ? Styles.mt25 : {}]}>
                 <View style={[Styles.horizontal, Styles.alignEnd]}>
                     <View style={[Styles.form, Styles.mr16, { backgroundColor: sendMessageColor, maxWidth: Constants.SCREEN_WIDTH - 16 - 24 - 16 - 16 }]}>
-                        <ControlText>
-                            {item.message}
-                        </ControlText>
+                        {this._renderMessageContent(item)}
                     </View>
                     {
                         Helpers.isString(myAvatar) ?

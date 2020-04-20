@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import he from "he";
 
 /**
  * Helpers.ts
@@ -302,6 +303,16 @@ const Helpers = {
         str = str.replace(/Đ/g, "D");
         str = str.trim();
         return str;
+    },
+
+    /**
+     * Decode html string.
+     */
+    decodeHtmlElement: (s: string): string => {
+        if (!Helpers.isNullOrEmpty(s)) {
+            return he.decode(s);
+        }
+        return "";
     },
 };
 
