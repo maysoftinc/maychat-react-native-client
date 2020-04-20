@@ -22,7 +22,7 @@ import { Constants, Strings } from "../constants";
 import feathers from "@feathersjs/client";
 import io from "socket.io-client";
 import { TagSelect } from "react-native-tag-select";
-import Toast from "react-native-simple-toast";
+import Toast from "react-native-root-toast";
 
 export interface IProps extends ViewProps {
     title?: string;
@@ -75,16 +75,15 @@ interface ITag {
 }
 
 export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
-    public client: any = feathers();
-    private socket: any = io(Constants.Api.BASE_URL, {
-        transports: ['websocket'],
-        timeout: Constants.Api.TIMEOUT
+    public client = feathers();
+    private socket = io(Constants.Api.BASE_URL, {
+        transports: ['websocket']
     });
     private visitor: any;
     private ref: any | null;
     constructor(props: any) {
         super(props);
-        this.client.configure(feathers.socketio(this.socket), { pingTimeout: Constants.Api.TIMEOUT });
+        this.client.configure(feathers.socketio(this.socket, { timeout: Constants.Api.TIMEOUT }));
         this.client.configure(feathers.authentication({
             storage: AsyncStorage as any
         }));
@@ -141,12 +140,26 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
 
     public onError = async (error: any) => {
         console.log(error);
+        let toast = Toast.show("Connecting...", {
+            duration: Constants.Api.TIMEOUT,
+            position: Toast.positions.TOP,
+            shadow: true,
+            animation: true,
+            delay: 0
+        });
         try {
-            Toast.showWithGravity("Connecting...", Toast.LONG, Toast.TOP);
             await this.client.reAuthenticate(true);
+            Toast.hide(toast);
         } catch (err) {
             console.log(err);
-            Toast.show(Strings && Strings.App.CommonError, Toast.SHORT);
+            Toast.hide(toast);
+            Toast.show(Strings && Strings.App.CommonError, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.CENTER,
+                shadow: true,
+                animation: true,
+                delay: 0
+            })
         }
     }
 
