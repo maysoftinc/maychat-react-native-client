@@ -108,7 +108,8 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                     apiKey: this.props.apiKey,
                     visitorName: this.props.userName,
                     visitorId,
-                    _id: oldVisitorId
+                    _id: oldVisitorId,
+                    projectType: "MOBILE"
                 });
                 if (this.visitor.messages && this.visitor.messages.length > 0) {
                     this.visitor.messages.forEach(this.loadMessages);
@@ -119,6 +120,7 @@ export default class ControlChatBot extends PureComponent<IProps, IStateProps> {
                     apiKey: this.props.apiKey,
                     visitorName: this.props.userName,
                     visitorId,
+                    projectType: "MOBILE"
                 });
                 this.onRefreshVisitorId(this.visitor._id);
             }
