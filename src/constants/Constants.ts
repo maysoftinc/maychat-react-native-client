@@ -22,7 +22,7 @@ const Constants = {
      */
     Api: {
         /** Root URL of Api Server */
-        BASE_URL: "wss://chat.maysoft.io:3333", // Server Real
+        BASE_URL: "wss://chat.maysoft.io", // Server Real
         CLIENT_CERT: null,
         CLIENT_ID: null,
         CLIENT_KEY: null,
